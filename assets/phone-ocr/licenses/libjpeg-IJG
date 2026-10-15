@@ -1,0 +1,56 @@
+Independent JPEG Group's free JPEG software
+-------------------------------------------
+
+This package contains C software to implement JPEG image encoding, decoding,
+and transcoding.  JPEG is a standardized compression method for full-color
+and grayscale images.
+
+The distributed programs provide conversion between JPEG JFIF format and
+image files in PBMPLUS PPM/PGM, GIF, BMP, and Targa file formats.  The
+core compression and decompression library can easily be reused in other
+programs, such as image viewers.  The package is highly portable C code;
+we have tested it on many machines ranging from PCs to Crays.
+
+We are releasing this software for both noncommercial and commercial use.
+Companies are welcome to use it as the basis for JPEG-related products.
+We do not ask a royalty, although we do ask for an acknowledgement in
+product literature (see the README file in the distribution for details).
+We hope to make this software industrial-quality --- although, as with
+anything that's free, we offer no warranty and accept no liability.
+
+For more information, contact jpeg-info@ijg.org.
+
+
+Contents of this directory
+--------------------------
+
+jpegsrN.zip contains source code, documentation, and test files for
+release N in Windows format.
+
+jpegsrc.vN.tar.gz contains source code, documentation, and test files for
+release N in Unix format.
+
+T-REC-T.871-201105-I!!PDF-E.pdf is a PDF (Portable Document Format) file of
+the JFIF (JPEG File Interchange Format) specification version 1.
+This is a copy from https://www.itu.int/rec/T-REC-T.871.
+
+jfif3.pdf is a PDF (Portable Document Format) file of
+the older JFIF (JPEG File Interchange Format) specification version 1.
+This is a copy from https://www.w3.org/Graphics/JPEG/jfif3.pdf.
+
+Wallace.JPEG.pdf is a PDF (Portable Document Format) file of Greg Wallace's
+introductory article about JPEG.  This is an update of the article that
+appeared in the April 1991 Communications of the ACM.
+
+jpeg.documents.gz tells where to obtain the JPEG standard and documents
+about JPEG-related file formats.
+
+TIFFTechNote2.txt.gz is a draft of the proposed revisions to TIFF 6.0's
+JPEG support.
+
+pm.errata.gz is the errata list for the first printing of the textbook
+"JPEG Still Image Data Compression Standard" by Pennebaker and Mitchell.
+
+jdosaobj.zip contains pre-assembled object files for JMEMDOSA.ASM.
+If you want to compile the IJG code for MS-DOS, but don't have an assembler,
+these files may be helpful.

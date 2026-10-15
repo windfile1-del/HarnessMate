@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pet_companion_label">Harness Mate desktop pet companion</string>
+    <string name="pet_companion_description">Optional companion animations. Only while the pet is open and automatic following is selected, reads app/interface hints locally to choose reading, video and similar poses. Does not take screenshots, upload page text, tap or type. Disable automatic following in the pet menu at any time.</string>
+</resources>

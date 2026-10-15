@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="web_screen_text_label">Harness 屏幕文字（仅手动读取）</string>
+    <string name="web_screen_text_description">仅在你点击悬浮聊天中的 T 按钮时读取当前应用向系统暴露的可见文字，作为下一条网页模型问题的候选上下文。不会自动收集、控制手机或执行网页指令。发送前遵循隐私确认设置；关闭此服务仍可使用截图和手动文字输入。</string>
+</resources>

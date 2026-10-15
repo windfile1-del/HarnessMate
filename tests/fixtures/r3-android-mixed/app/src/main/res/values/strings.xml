@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">R3 Mixed App</string>
+    <string name="welcome_message">Welcome to R3 Android Mixed Sample</string>
+    <string name="run_result_label">Execution Output</string>
+</resources>

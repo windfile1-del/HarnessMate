@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "keys": [
+    {
+      "key_id": "harnessmate-rsa-2223e8cff5875eb0",
+      "x509_base64": "MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAw1kzbzv/JH3ZlEPfz3a5+gTIx9uQHxIzETMAFa22BIaJ+oFbNclEU7Gma1M17TDhUmam+X4GMeSZYBMSqzD7Q5XK11HovqEqKyT6BHPoNLvFn4uFE4OXUyRP6tvS5HY96e4OXoxuRJ83/WfjAydcUGteeV4KunZy2lIwiwei9Ufe1pQcgr3GIVmV0pFduBCPtCf/ww6e9R1Q8F+f+acPIeJFINcI8C9QQ8vJkGVnNIJ7Um943i8BtjtfBg3UxqVzrniZqeXm3AlGH80cXUDDiqIPlDIux5sbQjgIWgslL9TvslBYoJZIMzEm9g8VPLcBJRlrQ+IuIixUdLWKgiXgonzsAksXOazjdS2FvRK4L4pP0s7wlWX2s/vk8IAuKbSm3nquMhHq/84fNzC2oZHeKSeGrdFWhQLMGMoBpbaqmfuxMfaNDB8RiLm4wcDrrtYwRGSs8diToBdBCyD4nFfey8KmjMU+650kiiVMoBs7L1YLGAGZobOToaV77W9mWOKBAgMBAAE=",
+      "revoked": false
+    }
+  ]
+}

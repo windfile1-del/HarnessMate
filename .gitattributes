@@ -1,0 +1,19 @@
+# Cross-platform source checkout
+*.sh text eol=lf
+*.kt text
+*.kts text
+*.java text
+*.c text
+*.h text
+*.py text
+*.js text
+*.cjs text
+*.xml text
+*.md text
+*.txt text
+*.properties text
+*.json text
+*.ps1 text
+*.png binary
+*.jpg binary
+*.webp binary

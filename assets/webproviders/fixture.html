@@ -1,0 +1,53 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Harness Web Provider 本地测试页</title>
+<style>body{font:16px system-ui;margin:18px;max-width:760px}textarea{width:95%;height:100px}button,select{padding:10px;margin:4px}.fixture-user{padding:10px;background:#dde8ff}.fixture-answer{padding:10px;background:#eef1f3}pre{white-space:pre-wrap}.fixture-file{display:inline-block;margin:4px;padding:6px;background:#ddd}[hidden]{display:none!important}</style>
+<h2>本地测试页</h2><p>内容仅在设备本地显示，不连接第三方模型。请先在 Harness 中选择此 Provider，再发送问题。</p>
+<label>测试场景 <select id="scenario"><option>正常流式</option><option>回答替换</option><option>限流</option><option>生成失败</option><option>未确认完成</option></select></label>
+<button id="new-chat">新建对话</button><button id="login-toggle">切换登录验证</button><div id="login" hidden>登录后使用 <input type="password" placeholder="本地测试密码"><button id="login-ok">完成登录</button></div>
+<main id="messages"></main><form id="composer"><div id="previews"></div><div id="upload-busy" hidden aria-busy="true">附件处理中</div>
+<input id="files" type="file" multiple><textarea id="prompt" placeholder="输入问题"></textarea><br>
+<button id="send" type="submit">发送</button><button id="stop" type="button" hidden>停止生成</button><button id="regenerate" type="button" hidden>重新生成</button></form>
+<script>
+'use strict';
+let timer=null,lastQuestion='',lastAnswer=null;
+const $=id=>document.getElementById(id);
+if(!new URL(location.href).searchParams.get('chat'))history.replaceState(null,'','/fixture?chat='+Date.now());
+const storageKey=()=> 'fixture-'+new URL(location.href).searchParams.get('chat');
+function persist(){try{localStorage.setItem(storageKey(),JSON.stringify(Array.from($('messages').children).map(n=>({role:n.className,text:n.textContent,id:n.getAttribute('data-message-id'),complete:n.dataset.complete==='true',failed:n.dataset.failed==='true'}))));}catch(_){} }
+function finish(){clearInterval(timer);timer=null;$('stop').hidden=true;$('send').disabled=false;$('regenerate').hidden=!lastQuestion;persist();}
+function generate(question,regen){
+ if(timer)return;
+ lastQuestion=question;
+ if(!regen){const user=document.createElement('div');user.className='fixture-user';user.textContent=question;$('messages').append(user);}
+ else if(lastAnswer)lastAnswer.remove();
+ const answer=document.createElement('article');answer.className='fixture-answer';answer.setAttribute('data-message-id','answer-'+Date.now());lastAnswer=answer;$('messages').append(answer);
+ const body=document.createElement('div');answer.append(body);$('stop').hidden=false;$('regenerate').hidden=true;$('send').disabled=true;
+ const scenario=$('scenario').value;
+ if(scenario==='限流'){body.setAttribute('role','alert');body.textContent='请求过于频繁，请稍后再试';finish();return;}
+ if(scenario==='生成失败'){body.textContent='生成失败';answer.dataset.failed='true';finish();return;}
+ const text='这是本地测试页的回答。\n\n你发送的问题：'+question+'\n\n多轮会话、附件和网页接管均可在此验证。';
+ let count=0;
+ timer=setInterval(()=>{count=Math.min(text.length,count+6);body.textContent=text.slice(0,count);
+  if(scenario==='回答替换'&&count>24)body.textContent='更正后的回答：\n'+text.slice(0,count);
+  if(count===text.length){
+   if(scenario==='未确认完成'){clearInterval(timer);timer=null;return;}
+   finish();const code=document.createElement('pre');const inner=document.createElement('code');inner.textContent='println("fixture")';code.append(inner);answer.append(code);
+   answer.dataset.complete='true';const copy=document.createElement('button');copy.type='button';copy.textContent='复制回答';answer.append(copy);persist();
+  }
+ },150);
+}
+$('composer').onsubmit=e=>{e.preventDefault();const q=$('prompt').value;if(!q.trim())return;$('prompt').value='';generate(q,false);};
+$('new-chat').onclick=()=>{finish();$('messages').textContent='';$('previews').textContent='';$('files').value='';lastQuestion='';lastAnswer=null;$('regenerate').hidden=true;history.replaceState(null,'','/fixture?chat='+Date.now());};
+$('stop').onclick=finish;$('regenerate').onclick=()=>generate(lastQuestion,true);
+$('files').onchange=()=>{$('upload-busy').hidden=false;$('previews').textContent='';
+ Array.from($('files').files).forEach(file=>{const span=document.createElement('span');span.className='fixture-file';span.textContent=file.name;$('previews').append(span);});
+ setTimeout(()=>{$('upload-busy').hidden=true;},700);};
+function login(value){$('login').hidden=!value;$('composer').hidden=value;}
+$('login-toggle').onclick=()=>login($('login').hidden);$('login-ok').onclick=()=>login(false);
+try{const saved=JSON.parse(localStorage.getItem(storageKey())||'[]');saved.slice(-100).forEach(item=>{
+ if(!['fixture-user','fixture-answer'].includes(item.role))return;
+ const n=document.createElement('article');n.className=item.role;n.textContent=String(item.text||'').slice(0,500000);if(item.id)n.setAttribute('data-message-id',item.id);
+ if(item.failed)n.dataset.failed='true';if(item.complete){n.dataset.complete='true';const copy=document.createElement('button');copy.textContent='复制回答';n.append(copy);}
+ $('messages').append(n);if(item.role==='fixture-user')lastQuestion=n.textContent;else lastAnswer=n;
+ });$('regenerate').hidden=!lastQuestion;}catch(_){}
+</script></html>

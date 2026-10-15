@@ -1,0 +1,61 @@
+# Local IDE, operating-system and tool state
+.idea/
+.vscode/
+.gradle/
+**/.DS_Store
+**/Thumbs.db
+*.iml
+local.properties
+
+# Local workspace state and sensitive material
+.env
+.env.*
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+*credentials*
+/local-secrets/
+**/secrets.local.*
+**/private/
+**/local-config/
+**/oauth-tokens*
+*.db
+*.sqlite
+*.sqlite3
+*.log
+
+# Gradle / Android / intermediate build files
+/build/
+# Source packages such as src/dev/wind/agent/build/ are tracked source, not build output.
+.gradle/
+.cxx/
+.externalNativeBuild/
+*.apk
+*.aab
+*.apks
+*.idsig
+*.dex
+*.class
+*.jar
+*.aar
+*.so
+
+# Development snapshots, traces, caches and reports
+.build*/
+.build-*/
+.build_*/
+.toolchains/
+.review*/
+_archive/
+**/__pycache__/
+**/node_modules/
+**/dist/
+coverage/
+device-tests/
+docs/archive/
+screenshots/
+*.tmp
+*.bak

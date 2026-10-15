@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?><manifest xmlns:android="http://schemas.android.com/apk/res/android" package="dev.wind.agent">
+    <!-- Android 6.0. Stated here so the manifest is self-describing rather than
+         relying on whichever build path produced the APK: ./mkapk.sh passes 23 to
+         aapt2, d8 and apksigner, and build.gradle.kts sets minSdk = 23. Those four
+         used to disagree (the signer said 23 while the dexer said 24), which is
+         how API-24-only calls shipped in an APK that installs on Android 6. -->
+    <uses-sdk android:minSdkVersion="23"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+    <!-- NO storage permissions, on any Android version. All project access is
+         represented by explicit persistable SAF tree grants selected by the user. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <uses-permission android:name="com.termux.permission.RUN_COMMAND"/>
+    <uses-permission android:name="dev.wind.agent.runtime.BIND_RUNTIME"/>
+    <queries>
+        <intent><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent>
+        <package android:name="com.miui.securitycenter"/>
+        <package android:name="com.huawei.systemmanager"/>
+        <package android:name="com.coloros.safecenter"/>
+        <package android:name="com.oppo.safe"/>
+        <package android:name="com.oneplus.security"/>
+        <package android:name="com.vivo.permissionmanager"/>
+        <package android:name="com.iqoo.secure"/>
+        <package android:name="com.samsung.android.lool"/>
+        <package android:name="com.termux"/>
+        <package android:name="dev.wind.agent.runtime"/>
+    </queries>
+    <!-- Transport support for explicitly enabled LAN endpoints. NetworkPolicy still rejects
+         public HTTP and metadata targets before connecting; BrowserProtocol remains HTTPS-only. -->
+    <application android:allowBackup="false" android:usesCleartextTraffic="true" android:extractNativeLibs="true" android:hardwareAccelerated="true" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:name=".App" android:resizeableActivity="true" android:supportsRtl="true" android:theme="@style/AppTheme">
+        <activity android:configChanges="keyboardHidden|keyboard|navigation|orientation|screenSize|screenLayout|smallestScreenSize|density|uiMode" android:exported="true" android:launchMode="singleTop" android:name=".MainActivity" android:theme="@style/AppTheme" android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
+        </activity>
+        <activity android:configChanges="keyboardHidden|keyboard|navigation|orientation|screenSize|screenLayout|smallestScreenSize|density|uiMode" android:exported="false" android:name=".SettingsActivity" android:theme="@style/AppTheme" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".modelprovider.ModelProvidersActivity" android:exported="false" android:theme="@style/AppTheme" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".webprovider.WebProviderActivity" android:exported="false" android:theme="@style/AppTheme" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".webprovider.WebProviderBrowserActivity" android:exported="false" android:theme="@style/AppTheme" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".browser.BrowserActivity" android:exported="false" android:theme="@style/AppTheme" android:windowSoftInputMode="adjustResize"/>
+        <provider android:name=".webprovider.WebAttachmentProvider" android:authorities="dev.wind.agent.webattachments"
+            android:exported="false" android:grantUriPermissions="true"/>
+        <activity android:excludeFromRecents="true" android:exported="false" android:name=".project.WorkspaceGrantActivity" android:theme="@style/AppTheme"/>
+        <activity android:exported="false" android:name=".session.SessionDataActivity" android:theme="@style/AppTheme"/>
+        <activity android:exported="false" android:name=".skills.SkillsActivity" android:theme="@style/AppTheme"/>
+        <service android:exported="false" android:foregroundServiceType="dataSync|specialUse" android:stopWithTask="false" android:name=".AgentService">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="User-started long-running AI agent tasks with tool execution, waiting for user authorization, streaming checkpoints and explicit stop control"/>
+        </service>
+        <service android:name=".adb.AdbPairingService" android:exported="false"
+            android:foregroundServiceType="shortService" android:stopWithTask="true"/>
+        <service android:name=".webprovider.WebScreenTextService" android:label="@string/web_screen_text_label"
+            android:exported="true" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter><action android:name="android.accessibilityservice.AccessibilityService"/></intent-filter>
+            <meta-data android:name="android.accessibilityservice" android:resource="@xml/web_screen_text"/>
+        </service>
+        <activity android:name=".screen.ScreenSharePermissionActivity" android:exported="false"
+            android:excludeFromRecents="true" android:theme="@android:style/Theme.Material.Dialog.Alert"/>
+        <service android:name=".screen.ScreenShareService" android:exported="false"
+            android:foregroundServiceType="mediaProjection|specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="User-enabled floating AI chat window with on-message screen context"/>
+        </service>
+        <service android:name=".screen.PetCompanionService" android:label="@string/pet_companion_label"
+            android:exported="true" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter><action android:name="android.accessibilityservice.AccessibilityService"/></intent-filter>
+            <meta-data android:name="android.accessibilityservice" android:resource="@xml/pet_companion"/>
+        </service>
+        <activity android:name=".phone.PhoneControlsActivity" android:exported="false"
+            android:excludeFromRecents="true" android:theme="@android:style/Theme.Material.Dialog.Alert"/>
+        <activity android:name=".phone.PhoneDisplaySettingsActivity" android:exported="false" android:excludeFromRecents="true"/>
+        <activity android:name=".phone.PhoneDisplayPreviewActivity" android:exported="false" android:excludeFromRecents="true"/>
+        <service android:name=".phone.PhoneControlService" android:label="@string/phone_control_label"
+            android:exported="true" android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter><action android:name="android.accessibilityservice.AccessibilityService"/></intent-filter>
+            <meta-data android:name="android.accessibilityservice" android:resource="@xml/phone_control"/>
+        </service>
+        <service android:name=".phone.PhoneInputService" android:label="@string/phone_input_label"
+            android:exported="true" android:permission="android.permission.BIND_INPUT_METHOD">
+            <intent-filter><action android:name="android.view.InputMethod"/></intent-filter>
+            <meta-data android:name="android.view.im" android:resource="@xml/phone_input"/>
+        </service>
+        <activity android:name=".phone.ChatAssistActivity" android:exported="false" android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Material.Dialog.Alert"/>
+        <activity android:name=".phone.ChatVisualBindingActivity" android:exported="false" android:excludeFromRecents="true"/>
+        <activity android:name=".phone.ChatGuardianActivity" android:exported="false" android:excludeFromRecents="true"/>
+        <activity android:name=".mate.MateTaskActivity" android:exported="false"/>
+        <service android:name=".mate.MateWakeJobService" android:exported="false" android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service android:name=".phone.ChatGuardianService" android:exported="false" android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="User-consented background AI chat guardian on an independently owned virtual display"/>
+        </service>
+        <service android:name=".phone.ChatReportJobService" android:exported="false" android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service android:name=".memory.MemoryJobService" android:exported="false" android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service android:name=".phone.ChatNotificationService" android:exported="true"
+            android:label="Harness Mate 聊天回复助手" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter><action android:name="android.service.notification.NotificationListenerService"/></intent-filter>
+        </service>
+        <receiver android:name=".phone.PhoneSmsResultReceiver" android:exported="false"/>
+        <service android:exported="false" android:name=".shell.termux.TermuxResultService"/>
+        <receiver android:name=".artifact.ApkInstallReceiver" android:exported="false"/>
+        <!-- P6.4-A: the same runtime protocol now has an in-APK endpoint.
+             The process boundary keeps compiler/tool heap separate from UI and
+             leaves the external Companion available as a migration fallback. -->
+        <service
+            android:name=".runtime.VegaRuntimeService"
+            android:exported="false"
+            android:process=":runtime"/>
+        <service android:name=".runtime.linux.LinuxRuntimeService"
+            android:exported="false" android:process=":runtime"/>
+    </application>
+</manifest>

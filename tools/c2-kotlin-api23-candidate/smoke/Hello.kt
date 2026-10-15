@@ -1,0 +1,1 @@
+class Hello { fun sdk(): Int = android.os.Build.VERSION.SDK_INT }

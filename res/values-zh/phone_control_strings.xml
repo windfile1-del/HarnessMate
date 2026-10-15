@@ -1,0 +1,5 @@
+<resources>
+    <string name="phone_control_label">Harness Mate 手机自动化</string>
+    <string name="phone_control_description">可选智能体手机操作工具。仅显式观察时读取界面，或在视觉模式下注入手势。操作方案需要单独开启，改变手机需要用户确认；页面信息会发送给当前模型服务。</string>
+    <string name="phone_input_label">Harness Mate AI 输入</string>
+</resources>

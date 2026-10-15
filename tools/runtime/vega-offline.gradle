@@ -1,0 +1,60 @@
+// Adapted from Mobile-Harness RuntimeInstaller.writeAndroidGradleInitScript (MIT).
+// Copyright (c) 2026 techjarves. License: third_party/runtime/licenses/Mobile-Harness-MIT.txt.
+// Vega R2: immutable bundled repository; no online fallback added by this script.
+// Gradle exposes the actual init-script file even when the bundle was relocated.
+def bundledMaven = new File(buildscript.sourceFile.parentFile, 'maven')
+def vegaMaven = uri(System.getProperty('vega.maven', bundledMaven.absolutePath))
+def rejectProjectRepositories = false
+beforeSettings { settings ->
+    settings.pluginManagement.repositories {
+        maven { url = vegaMaven }
+    }
+}
+settingsEvaluated { settings ->
+    rejectProjectRepositories = settings.dependencyResolutionManagement.repositoriesMode.get().toString() == 'FAIL_ON_PROJECT_REPOS'
+    settings.dependencyResolutionManagement.repositories {
+        maven { url = vegaMaven }
+    }
+}
+gradle.beforeProject { project ->
+    project.buildscript.repositories { maven { url = vegaMaven } }
+    // RepositoriesMode.FAIL_ON_PROJECT_REPOS must continue to work.
+    if (!rejectProjectRepositories) {
+        project.repositories { maven { url = vegaMaven } }
+    }
+}
+
+// Keep test verification tied to real Gradle Test tasks and their current XML.
+def explicitlyTesting = gradle.startParameter.taskNames.any { it.tokenize(':').last().toLowerCase().contains('test') }
+gradle.taskGraph.whenReady { graph ->
+    if (explicitlyTesting && !graph.allTasks.any { it instanceof org.gradle.api.tasks.testing.Test }) {
+        throw new GradleException('R2_NO_JUNIT_TASKS: the selected test plan has no JVM Test task')
+    }
+}
+gradle.taskGraph.afterTask { task, state ->
+    if (task instanceof org.gradle.api.tasks.testing.Test && state.failure == null && (!state.noSource || explicitlyTesting)) {
+        if (state.skipped && !state.upToDate && state.skipMessage != 'FROM-CACHE') {
+            throw new GradleException('R2_JUNIT_NOT_EXECUTED: ' + task.path)
+        }
+        if (!task.reports.junitXml.required.get()) {
+            throw new GradleException('R2_JUNIT_REPORT_DISABLED: ' + task.path)
+        }
+        def reports = task.reports.junitXml.outputLocation.get().asFile
+        def files = reports.listFiles()?.findAll { it.name.startsWith('TEST-') && it.name.endsWith('.xml') } ?: []
+        if (state.noSource || files.isEmpty()) throw new GradleException('R2_JUNIT_REPORT_MISSING: ' + task.path)
+        def factory = javax.xml.parsers.DocumentBuilderFactory.newInstance()
+        factory.setFeature('http://apache.org/xml/features/disallow-doctype-decl', true)
+        factory.setFeature('http://xml.org/sax/features/external-general-entities', false)
+        factory.setFeature('http://xml.org/sax/features/external-parameter-entities', false)
+        int tests = 0
+        files.each { file ->
+            def suite = factory.newDocumentBuilder().parse(file).documentElement
+            if (suite.tagName != 'testsuite' || suite.getAttribute('failures') != '0' || suite.getAttribute('errors') != '0') {
+                throw new GradleException('R2_JUNIT_REPORT_FAILED: ' + task.path)
+            }
+            tests += Integer.parseInt(suite.getAttribute('tests'))
+        }
+        if (tests == 0) throw new GradleException('R2_JUNIT_NO_TESTS: ' + task.path)
+        println('VEGA_JUNIT_VERIFIED ' + task.path + ' tests=' + tests)
+    }
+}

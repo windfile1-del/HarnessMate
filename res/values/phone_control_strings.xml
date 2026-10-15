@@ -1,0 +1,5 @@
+<resources>
+    <string name="phone_control_label">Harness Mate phone automation</string>
+    <string name="phone_control_description">Optional agent phone tools. Reads UI only on explicit observations, or injects gestures for visual mode. Configure a mode separately. Phone changes require user confirmation. Page content is sent to your selected model.</string>
+    <string name="phone_input_label">Harness Mate AI input</string>
+</resources>

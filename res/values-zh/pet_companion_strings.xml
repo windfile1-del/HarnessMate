@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pet_companion_label">Harness Mate 桌宠行为陪伴</string>
+    <string name="pet_companion_description">可选陪伴动画。仅在桌宠打开且选择自动跟随时，本地读取应用和界面线索，选择阅读、看视频等姿态。不截图、不上传页面文字、不点击或输入。可随时在桌宠菜单关闭自动跟随。</string>
+</resources>
